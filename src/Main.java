@@ -1,191 +1,114 @@
-import com.sun.source.tree.BreakTree;
-
 import java.io.*;
-import java.util.Scanner;
-import java.io.PrintWriter;
+import java.util.Random;
 
 public class Main {
-    public static void registration(String username, String password) throws IOException {
-        String filePath = "C:\\Users\\Крис\\Desktop\\web\\Back end\\Final project\\IT_village\\data.csv";
 
-        FileWriter fw = new FileWriter(filePath, true);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter pw = new PrintWriter(bw);
-
-        pw.println(username + "," + password);
-        System.out.println("Successfully registered!");
-        pw.flush();
-        pw.close();
+    public static void mainCaller() throws IOException {
+        RegistrationAndLogin.main(null);
     }
 
-    public static boolean isLoginSuccessful(String loginUsername, String loginPassword) throws IOException {
-        String filePath = "C:\\Users\\Крис\\Desktop\\web\\Back end\\Final project\\IT_village\\data.csv";
-        BufferedReader reader = null;
-        String line = "";
-        boolean check = false;
-        reader = new BufferedReader(new FileReader(filePath));
-        while ((line = reader.readLine()) != null) {
-
-            String[] row = line.split(",");
-            for (int j = 0; j < row.length / 2; j++) {
-                for (int i = 0; i < 2; i++) {
-                    if (loginUsername.equalsIgnoreCase(row[i]) && loginPassword.equalsIgnoreCase(row[i + 1])) {
-                        check = true;
-                        break;
-                    }
-                }
+    public static int currentPositionOnBoard(int positionOnBoard, int randomDiceNum) {
+        int count = 1;
+        for (int i = 1; i <= randomDiceNum; i++) {
+            positionOnBoard = positionOnBoard + count;
+            if (positionOnBoard > 12) {
+                positionOnBoard = 1;
             }
         }
 
-        return check;
+        return positionOnBoard;
     }
 
-    public static String loginMessage(String loginUsername, String loginPassword) throws IOException {
-        if (isLoginSuccessful(loginUsername,loginPassword)) {
-            System.out.println();
-            return ("Successfully logged in!");
+    public static char letterFromGameBoard(char[] gameBoard, int positionOnBoard, int moves, int randomDiceNum) {
+        if (moves == 0) {
+            return (gameBoard[positionOnBoard - 1]);
         } else {
-            System.out.println();
-            return ("Wrong username/password");
+            if (positionOnBoard == 0) {
+                return (gameBoard[currentPositionOnBoard(positionOnBoard, randomDiceNum)]);
+            } else {
+                return (gameBoard[currentPositionOnBoard(positionOnBoard, randomDiceNum) - 1]);
+            }
         }
     }
 
-    public static boolean isUsernameTaken(String username) throws IOException {
-        String file = "C:\\Users\\Крис\\Desktop\\web\\Back end\\Final project\\IT_village\\data.csv";
-        BufferedReader reader = null;
-        String line = "";
-        boolean check = false;
-        reader = new BufferedReader(new FileReader(file));
-        while ((line = reader.readLine()) != null) {
-
-            String[] row = line.split(",");
-            for (int j = 0; j < row.length / 2; j++) {
-                for (int i = 0; i < 2; i++) {
-                    if (username.equalsIgnoreCase(row[j])) {
-                        check = true;
-                        break;
-                    }
-                }
-            }
+    public static void namesOfBoardPlaces(char[] gameBoard, int positionOnBoard, int moves, int randomDiceNum) {
+        switch (letterFromGameBoard(gameBoard, positionOnBoard, moves, randomDiceNum)) {
+            case 'P':
+                System.out.println("Wi-Fi pub");
+                break;
+            case 'I':
+                System.out.println("Wi-Fi motel");
+                break;
+            case 'F':
+                System.out.println("Freelance Project");
+                break;
+            case 'S':
+                System.out.println("Storm");
+                break;
+            case 'V':
+                System.out.println("Super PHP");
+                break;
+            case 'N':
+                System.out.println("VSC");
+                break;
         }
-
-        return check;
     }
 
-    public static String isAccountLoggedAlready(String[] tempUsernames, String[] tempPasswords, int index){
-        boolean checkUser = false;
-        boolean checkPass = false;
-
-        if (index > 0){
-            for (int i = 1; i < index+1; i++) {
-                if (tempUsernames[index].equalsIgnoreCase(tempUsernames[index - i])){
-                    checkUser = true;
-                }
-                if (tempPasswords[index].equalsIgnoreCase(tempPasswords[index - i])){
-                    checkPass = true;
-                }
-            }
-        }
-        index++;
-
-        if (checkUser && checkPass){
-            System.out.println();
-            return "There is already an account logged with the same credentials.";
-        }else {
-            return "";
+    public static void descriptionOfBoardPlaces(char[] gameBoard, int positionOnBoard, int moves, int randomDiceNum){
+        switch (letterFromGameBoard(gameBoard, positionOnBoard, moves, randomDiceNum)) {
+            case 'P':
+                System.out.println("You have to buy a Cloud cocktail");
+                break;
+            case 'I':
+                System.out.println("If you have enough money you have to buy it");
+                System.out.println("If not - you have to pay your stay");
+                break;
+            case 'F':
+                System.out.println("You receive a payment");
+                break;
+            case 'S':
+                System.out.println("The Wi-Fi in the village dies, you become depressed and skip two rows.");
+                break;
+            case 'V':
+                System.out.println("Your money multiplies by 10");
+                break;
+            case 'N':
+                System.out.println("If you step on this you win the game");
+                break;
         }
     }
 
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("How many people are you?");
-        String people = sc.nextLine();
-        int index = 0;
-        String[] tempUsernames = new String[Integer.parseInt(people)];
-        String[] tempPasswords = new String[Integer.parseInt(people)];
-
-        for (int i = 1; i <= Integer.parseInt(people); i++) {
-            System.out.println("\nPlayer#" + i);
-            System.out.println("\n1. Register");
-            System.out.println("2. Login");
-            System.out.println("\nPick a choice: ");
-            String choice = sc.nextLine();
-
-            if (choice.equals("1")) {
-
-                while (true) {
-                    System.out.println("\nRegister: ");
-                    System.out.println("\nEnter a username: ");
-                    String username = sc.nextLine();
-                    System.out.println("Enter a password: ");
-                    String password = sc.nextLine();
-                    if ((isUsernameTaken(username))) {
-                        System.out.println("The username is already taken!");
-                    } else {
-                        registration(username, password);
-
-                        while (true) {
-                            System.out.println("\nLogin: ");
-                            System.out.println("\nEnter a username: ");
-                            String loginUsername = sc.nextLine();
-                            System.out.println("Enter a password: ");
-                            String loginPassword = sc.nextLine();
-                            if (!username.equalsIgnoreCase(loginUsername) && password.equalsIgnoreCase(loginPassword)){
-                                System.out.println();
-                                System.out.println("The entered credentials don't match with the registered ones.");
-                            } else {
-                                System.out.println(loginMessage(loginUsername, loginPassword));
-                            }
-
-                            if (loginMessage(loginUsername,loginPassword).equalsIgnoreCase("Successfully logged in!") && (username.equalsIgnoreCase(loginUsername) && password.equalsIgnoreCase(loginPassword))) {
-                                if (i == Integer.parseInt(people)) {
-                                    System.out.println("Game starts.");
-                                    break;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                    }
+        //mainCaller();
+        int moves = 0;
+        String filePath = "C:\\Users\\Крис\\Desktop\\web\\Back end\\Final project\\IT_village\\peopleCount.csv";
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        Random random = new Random();
+        char[] gameBoard = {'P', 'I', 'F', 'S', 'F', 'V', 'I', 'F', 'F', 'I', 'N', 'P'};
+        int people = Integer.parseInt(reader.readLine());
+        int[] peopleMoney = new int[people];
+        for (int i = 0; i < peopleMoney.length; i++) {
+            peopleMoney[i] = 50;
+        }
+        while (true) {
+            for (int i = 1; i <= people; i++) {
+                int positionOnBoard = random.nextInt(gameBoard.length) + 1;
+                int randomDiceNum = random.nextInt(6) + 1;
+                System.out.println("Position: " + positionOnBoard);
+                System.out.println("Dice number: " + randomDiceNum);
+                System.out.println(letterFromGameBoard(gameBoard, positionOnBoard, moves, randomDiceNum));
+                System.out.println(currentPositionOnBoard(positionOnBoard, randomDiceNum));
+                namesOfBoardPlaces(gameBoard,positionOnBoard,moves,randomDiceNum);
+                descriptionOfBoardPlaces(gameBoard,positionOnBoard,moves,randomDiceNum);
+                System.out.println(peopleMoney[i-1]);
+                System.out.println();
+                if (letterFromGameBoard(gameBoard, positionOnBoard, moves, randomDiceNum) == 'N') {
+                    System.out.println("Player#" + i + " won the game");
                     break;
                 }
-
-
-            } else if (choice.equals("2")) {
-                while (true) {
-                    System.out.println("\nLogin: ");
-                    System.out.println("\nEnter a username: ");
-                    String loginUsername = sc.nextLine();
-                    System.out.println("Enter a password: ");
-                    String loginPassword = sc.nextLine();
-
-                    tempUsernames[index] = loginUsername;
-                    tempPasswords[index] = loginPassword;
-                    System.out.println();
-                    if (loginMessage(loginUsername, loginPassword).equalsIgnoreCase("Successfully logged in!")){
-                        if (isAccountLoggedAlready(tempUsernames,tempPasswords, index).equalsIgnoreCase("There is already an account logged with the same credentials.")){
-                            System.out.println(isAccountLoggedAlready(tempUsernames,tempPasswords, index));
-                        }else {
-                            System.out.println(loginMessage(loginUsername, loginPassword));
-                        }
-                    }else {
-                        System.out.println(loginMessage(loginUsername, loginPassword));
-                    }
-                    System.out.println();
-                    if (loginMessage(loginUsername, loginPassword).equalsIgnoreCase("Successfully logged in!") && isAccountLoggedAlready(tempUsernames,tempPasswords,index).equalsIgnoreCase("")) {
-                        index++;
-                        if (i == Integer.parseInt(people)) {
-                            System.out.println("Game starts.");
-                            break;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-            } else {
-                System.out.println("Not a choice.");
             }
-        }
+            moves++;
 
+        }
     }
 }
