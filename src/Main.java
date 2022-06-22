@@ -75,27 +75,24 @@ public class Main {
 
         if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 2) && !boughtOrNot[0]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;
+            peopleMoney[id] = peopleMoney[id] - 100;                    //if the first motel is not bought buy it and save the id of the player who bought it
             boughtOrNot[0] = true;
             System.out.println("You bought the first motel");
             idsOfBuyers[0] = id;
-            System.out.println(idsOfBuyers[0]);
 
         } else if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 7) && !boughtOrNot[1]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;
+            peopleMoney[id] = peopleMoney[id] - 100;            //if the second motel is not bought buy it and save the id of the player who bought it
             boughtOrNot[1] = true;
             System.out.println("You bought the second motel");
             idsOfBuyers[1] = id;
-            System.out.println(idsOfBuyers[1]);
 
         } else if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 10) && !boughtOrNot[2]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;
+            peopleMoney[id] = peopleMoney[id] - 100;            //if the third motel is not bought buy it and save the id of the player who bought it
             boughtOrNot[2] = true;
             System.out.println("You bought the third motel");
             idsOfBuyers[2] = id;
-            System.out.println(idsOfBuyers[2]);
 
         } else if ((peopleMoney[id] < 100 && positionOnBoard[id] == 2 && !boughtOrNot[0]) || (peopleMoney[id] < 100 && positionOnBoard[id] == 7 && !boughtOrNot[1]) || (peopleMoney[id] < 100 && positionOnBoard[id] == 10 && !boughtOrNot[2])) {
             peopleMoney[id] = peopleMoney[id] - 10;
@@ -107,7 +104,8 @@ public class Main {
 
         if (positionOnBoard[id] == 2 && boughtOrNot[0]) {
 
-            if (idsOfBuyers[0] != id) {
+            if (idsOfBuyers[0] != id) {         //if the current player's id is not equal to the buyer of the first motel give money to the owner and get money from the current player
+
                 System.out.println(idsOfBuyers[0]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[0] + 1) + "'s motel");
                 peopleMoney[idsOfBuyers[0]] = peopleMoney[idsOfBuyers[0]] + 20;
@@ -118,7 +116,7 @@ public class Main {
 
         if (positionOnBoard[id] == 7 && boughtOrNot[1]) {
 
-            if (idsOfBuyers[1] != id) {
+            if (idsOfBuyers[1] != id) {         //if the current player's id is not equal to the buyer of the second motel give money to the owner and get money from the current player
 
                 System.out.println(idsOfBuyers[1]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[1] + 1) + "'s motel");
@@ -130,7 +128,7 @@ public class Main {
 
         if (positionOnBoard[id] == 10 && boughtOrNot[2]) {
 
-            if (idsOfBuyers[2] != id) {
+            if (idsOfBuyers[2] != id) {         //if the current player's id is not equal to the buyer of the third motel give money to the owner and get money from the current player
 
                 System.out.println(idsOfBuyers[2]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[2] + 1) + "'s motel");
@@ -152,12 +150,12 @@ public class Main {
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         Random random = new Random();
         char[] gameBoard = {'P', 'I', 'F', 'S', 'F', 'V', 'I', 'F', 'F', 'I', 'N', 'P'};
-        int people = Integer.parseInt(reader.readLine());
+        int people = Integer.parseInt(reader.readLine());   //get the amount of people playing from the csv file
         boolean[] boughtOrNot = new boolean[3];
         int[] peopleMoney = new int[people];
 
-        for (int i = 0; i < peopleMoney.length; i++) {
-            peopleMoney[i] = 150;
+        for (int i = 0; i < peopleMoney.length; i++) {      //give every player 50 money
+            peopleMoney[i] = 50;
 
         }
 
@@ -183,12 +181,12 @@ public class Main {
 
             } else {
                 String rollAgain = sc.nextLine();
-                String wait = "Rolling the dice";
-                System.out.print(wait);
+                String rollDice = "Rolling the dice";
+                System.out.print(rollDice);
 
             }
 
-            new Timer().scheduleAtFixedRate(new TimerTask() {
+            new Timer().scheduleAtFixedRate(new TimerTask() {       //a timer that runs a function every second until the dots become four(simulating dice rolling)
                 int times = 0;
 
                 @Override
@@ -204,13 +202,13 @@ public class Main {
             }, 1000, 1000);
 
             int finalMoves = moves;
-            new Timer().scheduleAtFixedRate(new TimerTask() {
+            new Timer().scheduleAtFixedRate(new TimerTask() {       //a timer that runs the function after 4.5 seconds(right after the dice finished rolling)
 
                 @Override
                 public void run() {
                     int id = 0;
 
-                    for (int i = 1; i <= people; i++) {
+                    for (int i = 1; i <= people; i++) {     //loops through every player's current stats
 
                         if (peopleMoney[i - 1] <= 0) {
                             System.out.println("Player#" + i + " ran out of money.");
@@ -231,7 +229,7 @@ public class Main {
                         System.out.println();
                         System.out.println("Player#" + i);
 
-                        if (missingMoves[i - 1] == 0) {
+                        if (missingMoves[i - 1] == 0) {     //if a player is not missing a move change and display his position and dice number
 
                             if (finalMoves != 0) {
                                 int count = 1;
@@ -259,10 +257,10 @@ public class Main {
 
                         }
 
-                        if ((previousLetters[i - 1] == 'S') && (missingMoves[i - 1] < 2)) {
+                        if ((previousLetters[i - 1] == 'S') && (missingMoves[i - 1] < 2)) {     //if a player received 'S' from a previous move and he is missing less than 2 moves
 
                             if (finalMoves != 0 && missingMoves[i - 1] != 0) {
-                                System.out.println("Position: " + currentPositionOnBoard(finalMoves, startingPositionOnBoard, id, positionOnBoard));
+                                System.out.println("Position: " + currentPositionOnBoard(finalMoves, startingPositionOnBoard, id, positionOnBoard));    //displays position even while missing moves
 
                             }
 
@@ -273,7 +271,7 @@ public class Main {
                             missingMoves[i - 1]++;
 
                             if (missingMoves[i - 1] == 2) {
-                                missingMoves[i - 1] = 0;
+                                missingMoves[i - 1] = 0;        //when he misses the second move it resets his missed moves
 
                             }
                         }
@@ -289,7 +287,7 @@ public class Main {
                             System.exit(0);
 
                         } else if ((letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard) == 'N') && (finalMoves == 0 || finalMoves == 1 || finalMoves == 2)) {
-                            System.out.println("Sorry, you can't win from the first,second or third time.");
+                            System.out.println("Sorry, you can't win from the first, second or third time.");
 
                         }
 
