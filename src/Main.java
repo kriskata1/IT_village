@@ -42,7 +42,7 @@ public class Main {
         }
     }
 
-    public static void descriptionOfBoardPlaces(char[] gameBoard, int moves, int[] startingPositionOnBoard, int id, int[] positionOnBoard, int[] peopleMoney, boolean[] boughtOrNot, int[] idsOfBuyers) {
+    public static void descriptionOfBoardPlaces(char[] gameBoard, int moves, int[] startingPositionOnBoard, int id, int[] positionOnBoard, int[] peopleMoney, boolean[] boughtOrNot, int[] idsOfBuyers, int[] missingMoves) {
         switch (letterFromGameBoard(gameBoard, moves, startingPositionOnBoard, id, positionOnBoard)) {
             case 'P':
                 System.out.println(("You have to buy a Cloud cocktail"));
@@ -51,7 +51,7 @@ public class Main {
             case 'I':
                 System.out.println("If you have enough money you have to buy it");
                 System.out.println("If not - you have to pay your stay");
-                ifStepOnMotel(peopleMoney, id, positionOnBoard, boughtOrNot, idsOfBuyers);
+                ifStepOnMotel(peopleMoney, id, positionOnBoard, boughtOrNot, idsOfBuyers, missingMoves);
                 isMotelBought(peopleMoney, id, positionOnBoard, boughtOrNot, idsOfBuyers);
                 break;
             case 'F':
@@ -75,21 +75,21 @@ public class Main {
 
         if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 2) && !boughtOrNot[0]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;                    //if the first motel is not bought buy it and save the id of the player who bought it
+            peopleMoney[id] = peopleMoney[id] - 100;                    //if the first motel is not bought, buy it and save the id of the player who bought it
             boughtOrNot[0] = true;
             System.out.println("You bought the first motel");
             idsOfBuyers[0] = id;
 
         } else if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 7) && !boughtOrNot[1]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;            //if the second motel is not bought buy it and save the id of the player who bought it
+            peopleMoney[id] = peopleMoney[id] - 100;            //if the second motel is not bought, buy it and save the id of the player who bought it
             boughtOrNot[1] = true;
             System.out.println("You bought the second motel");
             idsOfBuyers[1] = id;
 
         } else if ((peopleMoney[id] >= 100 && positionOnBoard[id] == 10) && !boughtOrNot[2]) {
 
-            peopleMoney[id] = peopleMoney[id] - 100;            //if the third motel is not bought buy it and save the id of the player who bought it
+            peopleMoney[id] = peopleMoney[id] - 100;            //if the third motel is not bought, buy it and save the id of the player who bought it
             boughtOrNot[2] = true;
             System.out.println("You bought the third motel");
             idsOfBuyers[2] = id;
@@ -100,15 +100,18 @@ public class Main {
         }
     }
 
-    public static void ifStepOnMotel(int[] peopleMoney, int id, int[] positionOnBoard, boolean[] boughtOrNot, int[] idsOfBuyers) {
+    public static void ifStepOnMotel(int[] peopleMoney, int id, int[] positionOnBoard, boolean[] boughtOrNot, int[] idsOfBuyers, int[] missingMoves) {
 
         if (positionOnBoard[id] == 2 && boughtOrNot[0]) {
 
             if (idsOfBuyers[0] != id) {         //if the current player's id is not equal to the buyer of the first motel give money to the owner and get money from the current player
 
-                System.out.println(idsOfBuyers[0]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[0] + 1) + "'s motel");
-                peopleMoney[idsOfBuyers[0]] = peopleMoney[idsOfBuyers[0]] + 20;
+                System.out.println("You gave 20 money to the owner.");
+                if (missingMoves[idsOfBuyers[0]] == 0){
+                    peopleMoney[idsOfBuyers[0]] = peopleMoney[idsOfBuyers[0]] + 20;     //if the owner of the motel is not missing moves give his money else not
+                }
+
                 peopleMoney[id] = peopleMoney[id] - 20;
 
             }
@@ -118,9 +121,12 @@ public class Main {
 
             if (idsOfBuyers[1] != id) {         //if the current player's id is not equal to the buyer of the second motel give money to the owner and get money from the current player
 
-                System.out.println(idsOfBuyers[1]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[1] + 1) + "'s motel");
-                peopleMoney[idsOfBuyers[1]] = peopleMoney[idsOfBuyers[1]] + 20;
+                System.out.println("You gave 20 money to the owner.");
+                if (missingMoves[idsOfBuyers[1]] == 0){
+                    peopleMoney[idsOfBuyers[1]] = peopleMoney[idsOfBuyers[1]] + 20;         //if the owner of the motel is not missing moves give his money else not
+                }
+
                 peopleMoney[id] = peopleMoney[id] - 20;
 
             }
@@ -130,10 +136,12 @@ public class Main {
 
             if (idsOfBuyers[2] != id) {         //if the current player's id is not equal to the buyer of the third motel give money to the owner and get money from the current player
 
-                System.out.println(idsOfBuyers[2]);
                 System.out.println("You stepped on Player#" + (idsOfBuyers[2] + 1) + "'s motel");
                 System.out.println("You gave 20 money to the owner.");
-                peopleMoney[idsOfBuyers[2]] = peopleMoney[idsOfBuyers[2]] + 20;
+                if (missingMoves[idsOfBuyers[2]] == 0){
+                    peopleMoney[idsOfBuyers[2]] = peopleMoney[idsOfBuyers[2]] + 20;         //if the owner of the motel is not missing moves give his money else not
+                }
+
                 peopleMoney[id] = peopleMoney[id] - 20;
 
             }
@@ -211,12 +219,15 @@ public class Main {
                     for (int i = 1; i <= people; i++) {     //loops through every player's current stats
 
                         if (peopleMoney[i - 1] <= 0) {
+                            System.out.println();
+                            System.out.println();
                             System.out.println("Player#" + i + " ran out of money.");
                             continue;
 
                         }
 
                         if ((boughtOrNot[0] && (idsOfBuyers[0] == i - 1)) && (boughtOrNot[1] && (idsOfBuyers[1] == i - 1)) && (boughtOrNot[2] && (idsOfBuyers[2] == i - 1))) {
+                            System.out.println();
                             System.out.println("Player#" + i + " bought all motels. He has " + peopleMoney[i - 1] + " money.");
                             System.exit(0);
 
@@ -278,16 +289,20 @@ public class Main {
 
                         System.out.println("Letter from board: " + letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard));
                         namesOfBoardPlaces(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard);
-                        descriptionOfBoardPlaces(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard, peopleMoney, boughtOrNot, idsOfBuyers);
+                        descriptionOfBoardPlaces(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard, peopleMoney, boughtOrNot, idsOfBuyers, missingMoves);
                         System.out.println("Money: " + peopleMoney[i - 1]);
                         System.out.println();
                         if ((letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard) == 'N') && (finalMoves != 0 && finalMoves != 1 && finalMoves != 2)) {
 
-                            System.out.println("Player#" + i + " has won the game from " + finalMoves + " moves.");
+                            System.out.println("Player#" + i + " has won the game from " + (finalMoves + 1) + " moves.");
                             System.exit(0);
 
                         } else if ((letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard) == 'N') && (finalMoves == 0 || finalMoves == 1 || finalMoves == 2)) {
                             System.out.println("Sorry, you can't win from the first, second or third time.");
+
+                        }
+                        if (peopleMoney[i - 1] <= 0) {
+                            System.out.println("Player#" + i + " ran out of money.");
 
                         }
 
