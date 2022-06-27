@@ -228,14 +228,12 @@ public class Main {
 
                 }
             }
-
             if (!(check.contains("0"))) {
                 System.out.println();
                 System.out.println("Everyone ran out of money. Game ends.");
                 System.exit(0);
 
             }
-
             for (int j = 0; j < check.length(); j++) {
 
                 if (check.charAt(j) == '1') {
@@ -281,6 +279,34 @@ public class Main {
         }
     }
 
+    public static void loadingAnimation() {
+        new Timer().scheduleAtFixedRate(new TimerTask() {       //a timer that runs a function every second until the dots become four(simulating dice rolling)
+            int times = 0;
+
+            @Override
+            public void run() {
+                times++;
+                System.out.print(".");
+
+                if (times == 4) {
+                    cancel();
+                }
+
+            }
+        }, 500, 1000);
+    }
+
+    public static void ranOutOfMoneyMessage(int[] peopleMoney, int i, boolean[] runOutOfMoney, int people) {
+        if (peopleMoney[i - 1] <= 0) {
+            System.out.println("Player#" + i + " ran out of money.");
+            runOutOfMoney[i - 1] = true;
+
+            if (people == 1){
+                System.exit(0);
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         mainCaller();   //calling the registration and login class before the beginning of the game
@@ -299,7 +325,6 @@ public class Main {
             peopleMoney[i] = 50;
 
         }
-
         int randomMoves = 6 + random.nextInt(28 - 6 + 1);
         System.out.println();
         System.out.println("Player/players get " + randomMoves + " moves for the game.");
@@ -313,23 +338,9 @@ public class Main {
         int[] idsOfBuyers = new int[3];
 
         while (moves <= randomMoves) {
-
             isOutOfMoves(moves, randomMoves, people, sc, peopleMoney);
-            new Timer().scheduleAtFixedRate(new TimerTask() {       //a timer that runs a function every second until the dots become four(simulating dice rolling)
-                int times = 0;
 
-                @Override
-                public void run() {
-                    times++;
-                    System.out.print(".");
-
-                    if (times == 4) {
-                        cancel();
-                    }
-
-                }
-            }, 1000, 1000);
-
+            loadingAnimation();
             int finalMoves = moves;
             new Timer().scheduleAtFixedRate(new TimerTask() {       //a timer that runs the function after 4.5 seconds(right after the dice finished rolling)
 
@@ -371,7 +382,6 @@ public class Main {
                             previousLetters[i - 1] = letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard);
 
                         }
-
                         ifMissingMove(previousLetters, i, missingMoves, finalMoves, startingPositionOnBoard, id, positionOnBoard);
 
                         System.out.println("Letter from board: " + letterFromGameBoard(gameBoard, finalMoves, startingPositionOnBoard, id, positionOnBoard));
@@ -380,22 +390,13 @@ public class Main {
                         System.out.println("Money after payments: " + peopleMoney[i - 1]);
                         System.out.println();
 
-                        if (peopleMoney[i - 1] <= 0) {
-                            System.out.println("Player#" + i + " ran out of money.");
-                            runOutOfMoney[i - 1] = true;
-
-                            if (people == 1){
-                                System.exit(0);
-                            }
-                        }
-
+                        ranOutOfMoneyMessage(peopleMoney,i, runOutOfMoney, people);
                         ifRunOutOfMoney(i, people, runOutOfMoney, check);
 
                         id++;
                     }
                     cancel();
                 }
-
             }, 4500, 100);
 
             moves++;
