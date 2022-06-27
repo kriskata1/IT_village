@@ -7,9 +7,9 @@ public class RegistrationAndLogin {
 
         String filePath = "C:\\Users\\Крис\\Desktop\\web\\Back end\\Final project\\IT_village\\data.csv";
 
-        FileWriter fw = new FileWriter(filePath, true);
-        BufferedWriter bw = new BufferedWriter(fw);                 //writes entered values to the csv file
-        PrintWriter pw = new PrintWriter(bw);
+        FileWriter fw = new FileWriter(filePath, true);        //writes entered values to the csv file
+        BufferedWriter bw = new BufferedWriter(fw);     //A BufferedWriter is an efficient way to write to a file (or anything else), as it will buffer the characters in Java memory.
+        PrintWriter pw = new PrintWriter(bw);       //get access to the printXXX methods like println()
 
         pw.println(username + "," + password);
         System.out.println();
@@ -162,13 +162,26 @@ public class RegistrationAndLogin {
         System.out.println("WELCOME TO THE IT VILLAGE GAME.");
         System.out.println("LET'S START...");
         Scanner sc = new Scanner(System.in);
-        System.out.println();
-        System.out.println("How many people are you?");
-        String people = sc.nextLine();
-        File csvFile = new File("peopleCount.csv");
-        PrintWriter pw = new PrintWriter(csvFile);
-        pw.print(people);       //prints the amount of people you entered in the csv file
-        pw.close();
+        String people;
+
+        while(true){
+            System.out.println();
+            System.out.println("How many people are you?");
+            people = sc.nextLine();
+            File csvFile = new File("peopleCount.csv");
+            PrintWriter pw = new PrintWriter(csvFile);
+            pw.print(people);       //prints the amount of people you entered in the csv file
+            pw.close();
+
+            try {
+                Integer.parseInt(people);
+                break;
+            }
+            catch (NumberFormatException e) {
+                System.out.println(people + " is not an integer");
+
+            }
+        }
 
         int index = 0;
         String[] tempUsernames = new String[Integer.parseInt(people)];
